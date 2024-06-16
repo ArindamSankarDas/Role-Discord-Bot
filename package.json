@@ -1,0 +1,19 @@
+{
+  "name": "role-assignment-bot",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node .",
+    "dev": "node --env-file=.env --watch-path=./src ."
+  },
+  "keywords": [
+    "node.js",
+    "discord.js"
+  ],
+  "author": "Arindam Sankar Das",
+  "license": "ISC",
+  "description": "A discord test bot",
+  "dependencies": {
+    "discord.js": "^14.15.3"
+  }
+}
