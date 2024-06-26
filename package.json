@@ -4,7 +4,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node .",
-    "dev": "node --env-file=.env --watch-path=./src ."
+    "dev": "node --env-file=.env --watch-path=./src  ."
   },
   "keywords": [
     "node.js",
