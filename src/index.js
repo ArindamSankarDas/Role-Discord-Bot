@@ -52,7 +52,7 @@ client.on(
   asyncErrorHandler.generalHandler(async (message) => {
     if (message.author.bot) return;
 
-    if (message.channelId === welcomeChannel) return;
+    if (message.channelId === channelsId.welcomeChannel) return;
 
     const roles = message.member.roles.cache.map((role) => role.name);
 
