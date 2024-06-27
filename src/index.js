@@ -109,7 +109,7 @@ client.on(
 );
 
 // Create an embeded message with role selection
-client.on(Events.MessageCreate, async (message) => {
+client.on(Events.MessageCreate, asyncErrorHandler.messageHandler(async (message) => {
   if (message.content !== "!setupRoles") return;
   if (message.channelId !== channelsId.welcomeChannel) return;
   if (message.author.bot) return;
@@ -129,7 +129,7 @@ client.on(Events.MessageCreate, async (message) => {
   await roleMessage.react("💚");
   await roleMessage.react("🧡");
   await roleMessage.react("❤️");
-});
+}));
 
 // Add reactions to add roles to the Members on clicking
 client.on(
