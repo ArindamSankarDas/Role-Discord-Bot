@@ -109,14 +109,16 @@ client.on(
 );
 
 // Create an embeded message with role selection
-client.on(Events.MessageCreate, asyncErrorHandler.messageHandler(async (message) => {
-  if (message.content !== "!setupRoles") return;
-  if (message.channelId !== channelsId.welcomeChannel) return;
-  if (message.author.bot) return;
+client.on(
+  Events.MessageCreate,
+  asyncErrorHandler.messageHandler(async (message) => {
+    if (message.content !== "!setupRoles") return;
+    if (message.channelId !== channelsId.welcomeChannel) return;
+    if (message.author.bot) return;
 
-  const embed = new EmbedBuilder()
-    .setColor("#0099ff")
-    .setTitle("Choose Your Roles!").setDescription(`
+    const embed = new EmbedBuilder()
+      .setColor("#0099ff")
+      .setTitle("Choose Your Roles!").setDescription(`
         💚 - Beginner
         🧡 - Intermediate
         ❤️ - Advanced
@@ -124,12 +126,13 @@ client.on(Events.MessageCreate, asyncErrorHandler.messageHandler(async (message)
         *(ps: you can select more than one role, but avoid doing so)*
       `);
 
-  const roleMessage = await message.channel.send({ embeds: [embed] });
+    const roleMessage = await message.channel.send({ embeds: [embed] });
 
-  await roleMessage.react("💚");
-  await roleMessage.react("🧡");
-  await roleMessage.react("❤️");
-}));
+    await roleMessage.react("💚");
+    await roleMessage.react("🧡");
+    await roleMessage.react("❤️");
+  })
+);
 
 // Add reactions to add roles to the Members on clicking
 client.on(
