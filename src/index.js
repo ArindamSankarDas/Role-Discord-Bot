@@ -46,48 +46,44 @@ client.once(Events.ClientReady, (readyClient) => {
 });
 
 /* message creations */
-// Delete all messages from the server
+// Delete all messages from any channel in the server
 client.on(
   Events.MessageCreate,
   asyncErrorHandler.generalHandler(async (message) => {
+    if (message.content !== "!delete") return;
     if (message.author.bot) return;
-
     if (message.channelId === channelsId.welcomeChannel) return;
 
     const roles = message.member.roles.cache.map((role) => role.name);
 
-    if (message.content === "!delete") {
-      if (!roles.includes(serverRoles.moderator)) {
-        return message.reply(`You are not authorised to execute this command`);
-      }
+    if (!roles.includes(serverRoles.moderator)) {
+      return message.reply(`You are not authorised to execute this command`);
+    }
 
-      message.guild.channels.cache.forEach(
-        asyncErrorHandler.channelHandler(async (channel) => {
-          if (channel.isTextBased()) {
-            let fetched;
+    const channel = message.guild.channels.cache.get(message.channelId);
 
-            do {
-              fetched = await channel.messages.fetch({ limit: 100 });
+    if (channel.isTextBased()) {
+      let fetched;
 
-              for (const msg of fetched.values()) {
-                await msg.delete().catch((error) => {
-                  if (error.code !== 10008) {
-                    throw new MessageError(
-                      error.name,
-                      error.message,
-                      msg.id,
-                      msg.content,
-                      channel.name
-                    );
-                  }
-                });
-              }
-            } while (fetched.size >= 2);
+      do {
+        fetched = await channel.messages.fetch({ limit: 100 });
 
-            console.log("All messages deleted.");
-          }
-        })
-      );
+        for (const msg of fetched.values()) {
+          await msg.delete().catch((error) => {
+            if (error.code !== 10008) {
+              throw new MessageError(
+                error.name,
+                error.message,
+                msg.id,
+                msg.content,
+                channel.name
+              );
+            }
+          });
+        }
+      } while (fetched.size >= 2);
+
+      console.log("All messages deleted");
     }
   })
 );
@@ -113,15 +109,14 @@ client.on(
 );
 
 // Create an embeded message with role selection
-client.on(
-  Events.MessageCreate,
-  asyncErrorHandler.messageHandler(async (message) => {
-    if (message.channelId !== channelsId.welcomeChannel) return;
+client.on(Events.MessageCreate, async (message) => {
+  if (message.content !== "!setupRoles") return;
+  if (message.channelId !== channelsId.welcomeChannel) return;
+  if (message.author.bot) return;
 
-    if (message.content === "!setupRoles") {
-      const embed = new EmbedBuilder()
-        .setColor("#0099ff")
-        .setTitle("Choose Your Roles!").setDescription(`
+  const embed = new EmbedBuilder()
+    .setColor("#0099ff")
+    .setTitle("Choose Your Roles!").setDescription(`
         💚 - Beginner
         🧡 - Intermediate
         ❤️ - Advanced
@@ -129,13 +124,12 @@ client.on(
         *(ps: you can select more than one role, but avoid doing so)*
       `);
 
-      const roleMessage = await message.channel.send({ embeds: [embed] });
-      await roleMessage.react("💚");
-      await roleMessage.react("🧡");
-      await roleMessage.react("❤️");
-    }
-  })
-);
+  const roleMessage = await message.channel.send({ embeds: [embed] });
+
+  await roleMessage.react("💚");
+  await roleMessage.react("🧡");
+  await roleMessage.react("❤️");
+});
 
 // Add reactions to add roles to the Members on clicking
 client.on(
